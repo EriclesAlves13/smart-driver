@@ -1,29 +1,30 @@
 package com.smartdriver.calc;
 
-import android.graphics.Color;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
-
 import java.text.NumberFormat;
 import java.util.Locale;
 
-/** Monta o texto do resultado (usado na janela flutuante e na tela manual). */
+/** Formatacao e cores do resultado (visual "Painel Noturno"). */
 public final class Render {
     private Render() {}
 
     static final Locale BR = new Locale("pt", "BR");
-    private static final int WARN = 0xFFFFB300;
-    private static final int MANUAL = 0xFF64B5F6;
+
+    public static final int GREEN = 0xFF34D399, ON_GREEN = 0xFF04281A, GREEN_TEXT = 0xFF6EE7B7, GREEN_BG = 0xFF10241B;
+    public static final int RED = 0xFFB91C1C, RED_TEXT = 0xFFFCA5A5;
+    public static final int AMBER = 0xFFFBBF24, ON_AMBER = 0xFF2B1A00, AMBER_TEXT = 0xFFFDE68A;
+    public static final int TEXT = 0xFFE8EEF5, MUTED = 0xFF93A1B2, TILE = 0xFF161E27, BLUE_SOFT = 0xFFA9CEFF;
 
     public static String money(Double v) {
         if (v == null) return null;
-        NumberFormat f = NumberFormat.getCurrencyInstance(BR);
-        return f.format(v).replace(' ', ' ');
+        return NumberFormat.getCurrencyInstance(BR).format(v).replace(' ', ' ');
     }
 
     public static String num(double v) {
         return String.format(BR, "%.1f", v);
+    }
+
+    public static String dec2(double v) {
+        return String.format(BR, "%.2f", v);
     }
 
     public static String verdictLabel(Calculator.Verdict v) {
@@ -35,79 +36,37 @@ public final class Render {
         }
     }
 
-    public static int verdictColor(Calculator.Verdict v) {
+    /** cor de fundo do bloco do resultado */
+    public static int verdictBg(Calculator.Verdict v) {
         switch (v) {
-            case ACCEPT: return 0xFF1DB954;
-            case REJECT: return 0xFFE53935;
-            default: return 0xFFB27A00;
+            case ACCEPT: return GREEN;
+            case REJECT: return RED;
+            default: return AMBER;
         }
     }
 
-    public static CharSequence body(Offer o, Calculator.Result r) {
-        SpannableStringBuilder sb = new SpannableStringBuilder();
-        row(sb, "Valor    ", money(o.price), o.priceSrc == Offer.Source.MANUAL && o.price != null);
-
-        String dist = null;
-        Double total = o.totalKm();
-        if (total != null) {
-            dist = num(total) + " km (" + num(o.pickupKm) + "+" + num(o.tripKm) + ")";
-        } else if (o.pickupKm != null || o.tripKm != null) {
-            dist = "incompleta";
+    /** cor do texto/icone sobre o bloco do resultado */
+    public static int verdictFg(Calculator.Verdict v) {
+        switch (v) {
+            case ACCEPT: return ON_GREEN;
+            case REJECT: return 0xFFFFFFFF;
+            default: return ON_AMBER;
         }
-        boolean distManual = (o.pickupKm != null && o.pickupSrc == Offer.Source.MANUAL)
-                || (o.tripKm != null && o.tripSrc == Offer.Source.MANUAL);
-        row(sb, "Distância", dist, distManual);
-        row(sb, "R$/km    ", r.perKm == null ? null : money(r.perKm), false);
-        row(sb, "Combust. ", r.fuelCost == null ? null : money(r.fuelCost), false);
-        row(sb, "Lucro    ", r.profit == null ? null : money(r.profit), false);
-
-        String dest;
-        switch (o.destination) {
-            case INSIDE: dest = "na cidade ✓"; break;
-            case ALLOWED: dest = o.matchedPlace != null
-                    ? "liberado ✓ " + o.matchedPlace : "local liberado ✓"; break;
-            case OUTSIDE: dest = "FORA ✗"; break;
-            default: dest = null;
-        }
-        row(sb, "Destino  ", dest, o.destSrc == Offer.Source.MANUAL && o.destination != Offer.Destination.UNKNOWN);
-        if (o.destinationText != null) {
-            int s = sb.length();
-            sb.append("  ").append(o.destinationText).append('\n');
-            sb.setSpan(new ForegroundColorSpan(Color.GRAY), s, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        // remove ultima quebra de linha
-        if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') sb.delete(sb.length() - 1, sb.length());
-        return sb;
     }
 
-    private static void row(SpannableStringBuilder sb, String label, String value, boolean manual) {
-        sb.append(label).append(' ');
-        int s = sb.length();
-        if (value == null) {
-            sb.append("não identificado");
-            sb.setSpan(new ForegroundColorSpan(WARN), s, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        } else {
-            sb.append(value);
-            if (manual) {
-                sb.append(" ✎");
-                sb.setSpan(new ForegroundColorSpan(MANUAL), s, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+    public static int verdictIcon(Calculator.Verdict v) {
+        switch (v) {
+            case ACCEPT: return R.drawable.ic_check;
+            case REJECT: return R.drawable.ic_x;
+            default: return R.drawable.ic_warn;
         }
-        sb.append('\n');
     }
 
-    public static String footer(Offer o, Calculator.Result r, long elapsedMs) {
-        StringBuilder f = new StringBuilder();
-        if (!r.reasons.isEmpty()) f.append("Motivo: ").append(String.join("; ", r.reasons)).append('\n');
-        if (r.verdict == Calculator.Verdict.INCOMPLETE || r.verdict == Calculator.Verdict.CHECK_DESTINATION) {
-            f.append("Não identificado: ").append(String.join(", ", r.missing)).append(". Toque em Editar.\n");
-        }
-        if (o.anyManual()) {
-            f.append("⚠ Análise com dados digitados (✎) — não é 100% automática");
-        } else if (elapsedMs >= 0) {
-            f.append("Lido da tela automaticamente · ").append(String.format(BR, "%.1f s", elapsedMs / 1000.0));
-            if (elapsedMs > 7000) f.append(" (acima de 7 s)");
-        }
-        return f.toString().trim();
+    /** rodape: origem dos dados e tempo da analise */
+    public static String footer(Offer o, long elapsedMs) {
+        if (o.anyManual()) return "✎ Com dados digitados — não é 100% automática";
+        if (elapsedMs < 0) return "";
+        String s = "Lido da tela automaticamente · " + String.format(BR, "%.1f s", elapsedMs / 1000.0);
+        return elapsedMs > 7000 ? s + " (acima de 7 s)" : s;
     }
 }

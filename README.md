@@ -25,11 +25,13 @@ Todas as versões ficam em [Releases](https://github.com/EriclesAlves13/smart-dr
    - **Consumo** do carro em km/L (ex: `11,5`). Obrigatório.
    - **Preço do combustível** em R$/litro (ex: `6,19`). Obrigatório.
    - **Cidade onde você roda** (padrão: Maranguape).
-   - *(Opcional)* **Bairros da cidade**, separados por vírgula. Use quando o Uber mostra só rua e bairro.
-   - *(Opcional)* **Locais liberados fora da cidade**, um por linha (ex: `Shopping Maracanaú`).
-2. Toque em **1. Permitir janela flutuante** e ative a opção para o Smart Driver.
-3. Toque em **2. Iniciar leitura da tela** e autorize. No Android 14 ou mais novo, escolha
+   - *(Opcional)* **Locais liberados fora da cidade**: toque em **+ Adicionar** (ex: `Shopping Maracanaú`).
+     Para remover, toque na etiqueta.
+   - *(Opcional)* **Bairros da cidade**: use quando o Uber mostra só rua e bairro.
+2. Toque em **Permitir janela flutuante** e ative a opção para o Smart Driver.
+3. Toque em **Iniciar leitura** e autorize. No Android 14 ou mais novo, escolha
    **"Tela inteira"** ou o app **Uber Driver**. O Uber Driver abre sozinho.
+   O selo no topo mostra o estado: *Pronto*, *Lendo a tela*, *Configure o carro* ou *Falta permissão*.
 4. Quando chegar uma oferta, a janela mostra:
 
    | Campo | Exemplo |
@@ -44,8 +46,20 @@ Todas as versões ficam em [Releases](https://github.com/EriclesAlves13/smart-dr
 
 5. Você toca em aceitar ou recusar **no próprio Uber**.
 
-Botões da janela: **Editar** corrige ou completa dados à mão. **—** minimiza. Arraste a janela para onde
-ela não cubra os botões do Uber. Para desligar, use a notificação → **Parar**.
+Botões da janela: **✎** corrige ou completa dados à mão. **—** minimiza e deixa só o resultado.
+Arraste a janela para onde ela não cubra os botões do Uber. Para desligar, toque em **Parar leitura**
+no app ou use a notificação → **Parar**.
+
+## Visual
+Tema escuro **"Painel Noturno"**, feito para ler rápido dirigindo e sem ofuscar à noite:
+- O resultado aparece num bloco grande: 🟢 **ACEITAR**, 🔴 **RECUSAR** ou 🟡 **CONFIRME O DESTINO / DADOS INCOMPLETOS**.
+  Cada um tem ícone (✓ ✗ ⚠) e texto, então dá para entender sem depender só da cor.
+- O **R$/km fica em destaque**, por ser o número que mais pesa na decisão.
+- Valor, distância (busca + viagem), combustível e lucro ficam num quadro 2×2.
+- Ao recusar, os **motivos aparecem listados**, por exemplo "R$ 1,30/km — abaixo de R$ 2,00".
+- Quando a cidade de destino não aparece na tela, a janela mostra **"É na cidade" / "É fora"**.
+  Você resolve com um toque, sem abrir outra tela.
+- Na tela de edição, cada campo diz de onde veio: **lido da tela**, **não identificado** ou **digitado ✎**.
 
 ## Regras do cálculo
 | Regra | Valor |
@@ -124,9 +138,11 @@ Tela do celular ──(MediaProjection, ~1,4 quadros/s)──► imagem reduzida
 | [`OverlayController.java`](app/src/main/java/com/smartdriver/calc/OverlayController.java) | Janela flutuante arrastável |
 | [`MainActivity.java`](app/src/main/java/com/smartdriver/calc/MainActivity.java) | Configuração e início |
 | [`ManualActivity.java`](app/src/main/java/com/smartdriver/calc/ManualActivity.java) | Preenchimento e correção manual |
-| [`OfferTest.java`](app/src/test/java/com/smartdriver/calc/OfferTest.java) | 19 testes automáticos da leitura e do cálculo |
+| [`OfferTest.java`](app/src/test/java/com/smartdriver/calc/OfferTest.java) | 19 testes da leitura e do cálculo |
+| [`UiSmokeTest.java`](app/src/test/java/com/smartdriver/calc/UiSmokeTest.java) | 4 testes que abrem as telas e desenham a janela em todos os resultados (Robolectric) |
 
 Java puro, sem bibliotecas além do Google ML Kit Text Recognition. minSdk 24, targetSdk 34.
+Fonte dos números e títulos: [Space Grotesk](https://fonts.google.com/specimen/Space+Grotesk) (SIL Open Font License).
 
 ### Compilar
 Requer JDK 17 e Android SDK 34.
@@ -139,7 +155,7 @@ O APK sai em `app/build/outputs/apk/release/app-release.apk`.
 
 ## Limitações conhecidas
 - **Ainda não foi testado com ofertas reais.** A leitura foi validada por testes automáticos com
-  texto no formato do cartão de oferta. Se o layout do Uber for diferente, o app mostra
+  texto no formato do cartão de oferta, e as telas por um simulador de Android (Robolectric). Se o layout do Uber for diferente, o app mostra
   "não identificado" em vez de inventar. Prints de ofertas reais ajudam a ajustar a leitura.
 - Se o Uber bloquear a captura de tela, a imagem chega preta. O app avisa e você usa *Editar*.
 - Uma distância isolada, sem "viagem" ou "de distância" por perto, não é atribuída a nenhum trecho.

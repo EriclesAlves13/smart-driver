@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_icon_btn"
+                android:contentDescription="Voltar"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_back"
+                android:tint="@color/text2" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sg_700"
+                    android:text="Conferir oferta"
+                    android:textColor="@color/text"
+                    android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/subtitle"
+                    style="@style/Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Corrija só o que estiver errado" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- valor -->
+        <LinearLayout
+            android:id="@+id/boxPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:labelFor="@id/price" android:text="Valor da corrida" android:textColor="@color/muted" android:textSize="13sp" />
+                <TextView android:id="@+id/tagPrice" style="@style/Tag" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="bottom" android:orientation="horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="6dp" android:layout_marginBottom="4dp" android:text="R$" android:textColor="@color/muted" android:textSize="16sp" />
+                <EditText android:id="@+id/price" style="@style/Input" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="0,00" android:importantForAutofill="no" android:textSize="26sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- km -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/boxPickup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="12dp">
+                <TextView android:id="@+id/lPickup" android:layout_width="wrap_content" android:layout_height="wrap_content" android:labelFor="@id/pickup" android:text="Km até o passageiro" android:textColor="@color/muted" android:textSize="13sp" />
+                <TextView android:id="@+id/tagPickup" style="@style/Tag" android:layout_marginTop="4dp" />
+                <EditText android:id="@+id/pickup" style="@style/Input" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:hint="0,0" android:importantForAutofill="no" android:textSize="24sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/boxTrip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="12dp">
+                <TextView android:id="@+id/lTrip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:labelFor="@id/trip" android:text="Km da viagem" android:textColor="@color/muted" android:textSize="13sp" />
+                <TextView android:id="@+id/tagTrip" style="@style/Tag" android:layout_marginTop="4dp" />
+                <EditText android:id="@+id/trip" style="@style/Input" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:hint="0,0" android:importantForAutofill="no" android:textSize="24sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- destino -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Destino" android:textColor="@color/muted" android:textSize="13sp" />
+            <TextView
+                android:id="@+id/destText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:drawableStart="@drawable/ic_pin"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/blue_soft"
+                android:gravity="center_vertical"
+                android:textColor="@color/text"
+                android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_segment"
+                android:orientation="horizontal"
+                android:padding="4dp">
+                <Button android:id="@+id/segIn" style="@style/Seg" android:layout_marginEnd="6dp" android:text="Na cidade" />
+                <Button android:id="@+id/segOut" style="@style/Seg" android:layout_marginEnd="6dp" android:text="Fora" />
+                <Button android:id="@+id/segUnk" style="@style/Seg" android:text="Não sei" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCalc"
+            style="@style/BtnPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="14dp"
+            android:text="Calcular" />
+
+        <!-- resultado -->
+        <LinearLayout
+            android:id="@+id/resultCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_overlay"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:visibility="gone">
+            <LinearLayout
+                android:id="@+id/verdictBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_round"
+                android:gravity="center"
+                android:minHeight="50dp"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
+                <ImageView android:id="@+id/verdictIcon" android:layout_width="22dp" android:layout_height="22dp" android:layout_marginEnd="8dp" android:importantForAccessibility="no" />
+                <TextView android:id="@+id/verdict" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/sg_700" android:letterSpacing="0.04" android:textSize="22sp" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/reasons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_box"
+                android:lineSpacingExtra="4dp"
+                android:padding="10dp"
+                android:textSize="13sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+                <LinearLayout style="@style/Metric">
+                    <TextView style="@style/TileLabel" android:text="R$/km" />
+                    <TextView android:id="@+id/mPerKm" style="@style/Num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="16sp" />
+                </LinearLayout>
+                <LinearLayout style="@style/Metric">
+                    <TextView style="@style/TileLabel" android:text="Combustível" />
+                    <TextView android:id="@+id/mFuel" style="@style/Num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="16sp" />
+                </LinearLayout>
+                <LinearLayout style="@style/Metric">
+                    <TextView style="@style/TileLabel" android:text="Lucro" />
+                    <TextView android:id="@+id/mProfit" style="@style/Num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/sg_700" android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/manualNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_box"
+                android:backgroundTint="@color/amber_bg"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="✎ Com dados digitados — não é 100% automática"
+                android:textColor="@color/amber_text"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnDone"
+            style="@style/BtnOutline"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:text="Voltar ao Uber" />
+    </LinearLayout>
+</ScrollView>

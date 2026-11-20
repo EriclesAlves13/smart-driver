@@ -101,7 +101,7 @@ public class CaptureService extends Service {
 
         overlay = new OverlayController(this);
         overlay.show();
-        overlay.setStatus("Lendo a tela… aguardando oferta");
+        overlay.setStatus("Lendo a tela… aguardando oferta", false);
 
         projection.registerCallback(new MediaProjection.Callback() {
             @Override public void onStop() { main.post(CaptureService.this::stopSelf); }
@@ -167,7 +167,7 @@ public class CaptureService extends Service {
             busy = false;
             if (++blackFrames == 3) {
                 main.post(() -> overlay.setStatus(
-                        "Tela preta: captura bloqueada pelo app ou tela desligada. Use Editar (manual)."));
+                        "Tela preta: captura bloqueada ou tela desligada. Use ✎ Editar.", true));
             }
             return;
         }

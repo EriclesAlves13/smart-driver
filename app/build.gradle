@@ -10,8 +10,8 @@ android {
         applicationId 'com.smartdriver.calc'
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName '1.0'
+        versionCode 2
+        versionName '1.1'
         ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
     }
 
@@ -24,6 +24,10 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -34,4 +38,5 @@ dependencies {
     // OCR no proprio aparelho (offline, modelo latino embutido)
     implementation 'com.google.mlkit:text-recognition:16.0.1'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.11.1'
 }

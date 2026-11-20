@@ -53,6 +53,13 @@ public final class Prefs {
                 .apply();
     }
 
+    public static void saveLists(Context c, List<String> hoods, List<String> places) {
+        sp(c).edit()
+                .putString("insideWords", String.join("\n", hoods))
+                .putString("allowedPlaces", String.join("\n", places))
+                .apply();
+    }
+
     /** separa por virgula, ponto e virgula ou linha */
     static List<String> split(String s) {
         List<String> out = new ArrayList<>();

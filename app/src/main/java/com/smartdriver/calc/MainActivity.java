@@ -2,111 +2,71 @@ package com.smartdriver.calc;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.InputType;
-import android.view.View;
+import android.util.TypedValue;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class MainActivity extends Activity {
     private static final int REQ_CAPTURE = 10;
     private static final String UBER_DRIVER = "com.ubercab.driver";
 
-    private EditText kmL, fuel, city, words, places;
-    private TextView status;
-    private Button btnOverlay, btnStart, btnStop;
+    private EditText kmL, fuel, city;
+    private FlowLayout placesView, hoodsView;
+    private TextView pill;
+    private Button btnMain;
+    private List<String> places, hoods;
 
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        float d = getResources().getDisplayMetrics().density;
-        int pad = (int) (16 * d);
-
-        LinearLayout col = new LinearLayout(this);
-        col.setOrientation(LinearLayout.VERTICAL);
-        col.setPadding(pad, pad, pad, pad);
-
-        TextView title = text("Smart Driver", 24);
-        title.setTypeface(null, android.graphics.Typeface.BOLD);
-        col.addView(title);
-        col.addView(text("Calculadora de ofertas. Lê a tela com a sua autorização e mostra "
-                + "ACEITAR ou RECUSAR. Você sempre decide e toca no Uber — o app não aceita nada sozinho.", 14));
-
-        col.addView(section("Regras"));
-        col.addView(text("• Mínimo R$ 2,00 por km (valor ÷ km totais: busca + viagem)\n"
-                + "• Mínimo R$ 8,00 por corrida\n"
-                + "• Destino somente na sua cidade ou em um local liberado\n"
-                + "• Lucro = valor − combustível dos km totais", 14));
-
-        col.addView(section("Seu carro (obrigatório)"));
-        kmL = field("Consumo (km por litro) ex: 11,5");
-        fuel = field("Preço do combustível (R$/litro) ex: 6,19");
-        col.addView(kmL);
-        col.addView(fuel);
-        col.addView(section("Cidade onde você roda"));
-        city = new EditText(this);
-        city.setHint("Maranguape");
-        col.addView(city);
-
-        col.addView(section("Bairros da cidade (opcional)"));
-        col.addView(text("O Uber às vezes mostra só rua e bairro. Liste bairros da sua cidade "
-                + "separados por vírgula para reconhecer o destino.", 13));
-        words = new EditText(this);
-        words.setHint("ex: Novo Maranguape, Parque São João");
-        col.addView(words);
-
-        col.addView(section("Locais liberados fora da cidade (opcional)"));
-        col.addView(text("Destinos fora da cidade que você aceita. Um por linha. Escreva o nome como "
-                + "aparece no Uber (ou o nome da rua). A ordem das palavras e os acentos não importam.", 13));
-        places = new EditText(this);
-        places.setHint("ex: Shopping Maracanaú");
-        places.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        places.setMinLines(2);
-        col.addView(places);
+        setContentView(R.layout.activity_main);
+        kmL = findViewById(R.id.kmL);
+        fuel = findViewById(R.id.fuel);
+        city = findViewById(R.id.city);
+        placesView = findViewById(R.id.places);
+        hoodsView = findViewById(R.id.hoods);
+        pill = findViewById(R.id.pill);
+        btnMain = findViewById(R.id.btnMain);
 
         Rules r = Prefs.load(this);
         if (r.kmPerLiter > 0) kmL.setText(Render.num(r.kmPerLiter));
-        if (r.fuelPrice > 0) fuel.setText(String.format(Render.BR, "%.2f", r.fuelPrice));
+        if (r.fuelPrice > 0) fuel.setText(Render.dec2(r.fuelPrice));
         city.setText(Prefs.city(this));
-        words.setText(Prefs.insideExtra(this));
-        places.setText(Prefs.allowedPlaces(this));
+        places = Prefs.split(Prefs.allowedPlaces(this));
+        hoods = Prefs.split(Prefs.insideExtra(this));
+        renderChips(placesView, places, "Novo local liberado", "ex: Shopping Maracanaú");
+        renderChips(hoodsView, hoods, "Novo bairro", "ex: Novo Maranguape");
 
-        col.addView(section("Iniciar"));
-        btnOverlay = button("1. Permitir janela flutuante", v -> startActivity(new Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()))));
-        btnStart = button("2. Iniciar leitura da tela", v -> startCapture());
-        btnStop = button("Parar leitura", v -> { CaptureService.stop(this); refresh(); });
-        col.addView(btnOverlay);
-        col.addView(btnStart);
-        col.addView(btnStop);
-        col.addView(button("Calcular manualmente", v -> {
-            if (saveConfig()) startActivity(new Intent(this, ManualActivity.class));
-        }));
-
-        status = text("", 13);
-        status.setPadding(0, pad / 2, 0, 0);
-        col.addView(status);
-
-        col.addView(section("Como funciona"));
-        col.addView(text("Usa a captura de tela oficial do Android (MediaProjection) e reconhecimento de "
-                + "texto no próprio celular, sem internet. Não usa API da Uber, não lê dados internos "
-                + "do app e não toca na tela. Se o Uber bloquear a captura ou algum dado não for "
-                + "lido, a janela avisa \"não identificado\" e você pode tocar em Editar.\n\n"
-                + "No Android 14+, ao autorizar, escolha \"Tela inteira\" (ou o app Uber Driver).", 13));
-
-        ScrollView sv = new ScrollView(this);
-        sv.addView(col);
-        setContentView(sv);
+        btnMain.setOnClickListener(v -> {
+            if (!overlayOk()) {
+                startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName())));
+            } else if (CaptureService.running) {
+                CaptureService.stop(this);
+                btnMain.postDelayed(this::refresh, 300);
+            } else {
+                startCapture();
+            }
+        });
+        findViewById(R.id.btnManual).setOnClickListener(v -> {
+            if (saveConfig(true)) startActivity(new Intent(this, ManualActivity.class));
+        });
 
         if (Build.VERSION.SDK_INT >= 33
                 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -122,32 +82,124 @@ public class MainActivity extends Activity {
 
     @Override protected void onPause() {
         super.onPause();
+        saveConfig(false);
         CaptureService.paused = false;
     }
 
-    private void refresh() {
-        boolean overlayOk = Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(this);
-        btnOverlay.setVisibility(overlayOk ? View.GONE : View.VISIBLE);
-        btnStart.setEnabled(overlayOk && !CaptureService.running);
-        btnStop.setVisibility(CaptureService.running ? View.VISIBLE : View.GONE);
-        status.setText(CaptureService.running
-                ? "● Leitura ativa. Abra o Uber Driver."
-                : overlayOk ? "Pronto para iniciar." : "Falta permitir a janela flutuante.");
+    private boolean overlayOk() {
+        return Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(this);
     }
 
-    private boolean saveConfig() {
-        Double k = parse(kmL), f = parse(fuel);
-        if (k == null || k <= 0 || f == null || f <= 0) {
-            Toast.makeText(this, "Preencha consumo (km/L) e preço do combustível.", Toast.LENGTH_LONG).show();
-            return false;
+    private void refresh() {
+        Double k = MainActivity.parse(kmL), f = MainActivity.parse(fuel);
+        boolean carOk = k != null && k > 0 && f != null && f > 0;
+        if (CaptureService.running) setPill("● Lendo a tela", false);
+        else if (!overlayOk()) setPill("● Falta permissão", true);
+        else if (!carOk) setPill("● Configure o carro", true);
+        else setPill("● Pronto", false);
+
+        if (!overlayOk()) {
+            btnMain.setText("Permitir janela flutuante");
+            btnMain.setBackgroundTintList(null);
+            btnMain.setTextColor(getColor(R.color.on_accent));
+        } else if (CaptureService.running) {
+            btnMain.setText("Parar leitura");
+            btnMain.setBackgroundTintList(ColorStateList.valueOf(Render.RED));
+            btnMain.setTextColor(0xFFFFFFFF);
+        } else {
+            btnMain.setText("Iniciar leitura");
+            btnMain.setBackgroundTintList(null);
+            btnMain.setTextColor(getColor(R.color.on_accent));
         }
-        Prefs.save(this, k.floatValue(), f.floatValue(), city.getText().toString(),
-                words.getText().toString(), places.getText().toString());
-        return true;
+    }
+
+    private void setPill(String s, boolean warn) {
+        pill.setText(s);
+        pill.setTextColor(warn ? Render.AMBER_TEXT : Render.GREEN_TEXT);
+        pill.setBackgroundTintList(ColorStateList.valueOf(warn ? 0xFF2A2210 : Render.GREEN_BG));
+    }
+
+    /** etiquetas: toque para remover, "+ Adicionar" para incluir */
+    private void renderChips(FlowLayout box, List<String> list, String title, String hint) {
+        box.removeAllViews();
+        int px14 = dp(14);
+        for (String item : list) {
+            TextView chip = chip(item);
+            chip.setBackgroundResource(R.drawable.bg_chip);
+            chip.setTextColor(getColor(R.color.blue_soft));
+            Drawable d = getDrawable(R.drawable.ic_check).mutate();
+            d.setTint(0xFF7DB6FF);
+            d.setBounds(0, 0, px14, px14);
+            chip.setCompoundDrawables(d, null, null, null);
+            chip.setCompoundDrawablePadding(dp(6));
+            chip.setContentDescription(item + ". Toque para remover");
+            chip.setOnClickListener(v -> new AlertDialog.Builder(this)
+                    .setMessage("Remover “" + item + "”?")
+                    .setPositiveButton("Remover", (dl, w) -> {
+                        list.remove(item);
+                        Prefs.saveLists(this, hoods, places);
+                        renderChips(box, list, title, hint);
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show());
+            box.addView(chip);
+        }
+        TextView add = chip("+ Adicionar");
+        add.setBackgroundResource(R.drawable.bg_chip_add);
+        add.setTextColor(getColor(R.color.muted));
+        add.setOnClickListener(v -> {
+            EditText in = new EditText(this);
+            in.setHint(hint);
+            in.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+            in.setTextColor(getColor(R.color.text));
+            FrameLayout wrap = new FrameLayout(this);
+            wrap.setPadding(dp(20), dp(8), dp(20), 0);
+            wrap.addView(in);
+            new AlertDialog.Builder(this)
+                    .setTitle(title)
+                    .setView(wrap)
+                    .setPositiveButton("Adicionar", (dl, w) -> {
+                        String s = in.getText().toString().replace(",", " ").trim();
+                        if (!s.isEmpty() && !list.contains(s)) {
+                            list.add(s);
+                            Prefs.saveLists(this, hoods, places);
+                            renderChips(box, list, title, hint);
+                        }
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
+        box.addView(add);
+    }
+
+    private TextView chip(String s) {
+        TextView t = new TextView(this);
+        t.setText(s);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        t.setMinHeight(dp(36));
+        t.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        t.setPadding(dp(10), dp(6), dp(12), dp(6));
+        return t;
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
+    }
+
+    private boolean saveConfig(boolean warn) {
+        Double k = parse(kmL), f = parse(fuel);
+        boolean ok = k != null && k > 0 && f != null && f > 0;
+        Rules cur = Prefs.load(this);
+        Prefs.save(this, ok ? k.floatValue() : (float) cur.kmPerLiter, ok ? f.floatValue() : (float) cur.fuelPrice,
+                city.getText().toString(), String.join("\n", hoods), String.join("\n", places));
+        if (!ok && warn) {
+            Toast.makeText(this, "Preencha consumo (km/L) e preço do combustível.", Toast.LENGTH_LONG).show();
+        }
+        return ok;
     }
 
     private void startCapture() {
-        if (!saveConfig()) return;
+        if (!saveConfig(true)) return;
         MediaProjectionManager mpm = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
         startActivityForResult(mpm.createScreenCaptureIntent(), REQ_CAPTURE);
     }
@@ -174,35 +226,5 @@ public class MainActivity extends Activity {
         String s = e.getText().toString().trim();
         if (s.isEmpty()) return null;
         try { return OfferParser.parseNumber(s); } catch (NumberFormatException ex) { return null; }
-    }
-
-    private TextView text(String s, int sp) {
-        TextView t = new TextView(this);
-        t.setText(s);
-        t.setTextSize(sp);
-        t.setTextColor(0xFF202124);
-        return t;
-    }
-
-    private TextView section(String s) {
-        TextView t = text(s, 16);
-        t.setTypeface(null, android.graphics.Typeface.BOLD);
-        t.setPadding(0, (int) (18 * getResources().getDisplayMetrics().density), 0, 4);
-        return t;
-    }
-
-    private EditText field(String hint) {
-        EditText e = new EditText(this);
-        e.setHint(hint);
-        e.setInputType(InputType.TYPE_CLASS_TEXT);   // aceita virgula
-        return e;
-    }
-
-    private Button button(String s, View.OnClickListener l) {
-        Button b = new Button(this);
-        b.setText(s);
-        b.setAllCaps(false);
-        b.setOnClickListener(l);
-        return b;
     }
 }

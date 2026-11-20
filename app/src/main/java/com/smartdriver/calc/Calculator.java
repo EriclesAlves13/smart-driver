@@ -36,14 +36,15 @@ public final class Calculator {
         if (o.price != null && res.fuelCost != null) res.profit = o.price - res.fuelCost;
 
         // Regras que ja podem reprovar mesmo com dados parciais
-        if (o.price != null && o.price < r.minPerTrip)
-            res.reasons.add(String.format(BR, "valor abaixo de R$ %.2f", r.minPerTrip));
         if (res.perKm != null && res.perKm < r.minPerKm)
-            res.reasons.add(String.format(BR, "abaixo de R$ %.2f/km", r.minPerKm));
+            res.reasons.add(String.format(BR, "R$ %.2f/km — abaixo de R$ %.2f", res.perKm, r.minPerKm));
+        if (o.price != null && o.price < r.minPerTrip)
+            res.reasons.add(String.format(BR, "Valor R$ %.2f — abaixo de R$ %.2f", o.price, r.minPerTrip));
         if (o.destination == Offer.Destination.OUTSIDE)
-            res.reasons.add("destino fora de " + r.city + " e não é local liberado");
+            res.reasons.add("Destino fora de " + r.city
+                    + (r.allowedPlaces.length > 0 ? " e não é local liberado" : ""));
         if (res.profit != null && res.profit <= 0)
-            res.reasons.add("sem lucro após combustível");
+            res.reasons.add("Sem lucro após o combustível");
 
         if (!res.reasons.isEmpty()) {
             res.verdict = Verdict.REJECT;

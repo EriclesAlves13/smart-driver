@@ -1,75 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
-    android:layout_width="220dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_overlay"
+    android:elevation="12dp"
     android:orientation="vertical"
-    android:background="@drawable/card_bg"
-    android:padding="8dp">
+    android:padding="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+        <View
+            android:id="@+id/dot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_dot" />
         <TextView
             android:id="@+id/status"
+            style="@style/Label"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Aguardando oferta…"
-            android:textColor="@color/muted"
-            android:textSize="11sp"
-            android:maxLines="2"/>
-        <TextView
+            android:maxLines="2"
+            android:text="Aguardando oferta…" />
+        <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="8dp" android:paddingEnd="8dp"
-            android:paddingTop="4dp" android:paddingBottom="4dp"
-            android:text="Editar"
-            android:textColor="@color/primary"
-            android:textStyle="bold"
-            android:textSize="12sp"/>
-        <TextView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_icon_btn"
+            android:contentDescription="Editar dados"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_pencil"
+            android:tint="@color/text2" />
+        <ImageButton
             android:id="@+id/btnMin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="8dp" android:paddingEnd="4dp"
-            android:paddingTop="4dp" android:paddingBottom="4dp"
-            android:text="—"
-            android:textColor="@color/text"
-            android:textStyle="bold"
-            android:textSize="14sp"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_icon_btn"
+            android:contentDescription="Minimizar"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_minus"
+            android:tint="@color/text2" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/verdict"
+    <!-- resultado -->
+    <LinearLayout
+        android:id="@+id/verdictBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/verdict_bg"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_round"
+        android:backgroundTint="#FF3A444F"
         android:gravity="center"
-        android:padding="4dp"
-        android:text="—"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:minHeight="58dp"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+        <ImageView
+            android:id="@+id/verdictIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_phone"
+            android:tint="@color/text" />
+        <TextView
+            android:id="@+id/verdict"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/sg_700"
+            android:letterSpacing="0.04"
+            android:text="AGUARDANDO"
+            android:textColor="@color/text"
+            android:textSize="24sp" />
+    </LinearLayout>
 
+    <!-- motivos da recusa -->
     <TextView
-        android:id="@+id/body"
+        android:id="@+id/reasons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:lineSpacingExtra="2dp"
-        android:textColor="@color/text"
-        android:textSize="12sp"
-        android:fontFamily="monospace"/>
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_box"
+        android:backgroundTint="@color/red_bg"
+        android:lineSpacingExtra="4dp"
+        android:padding="10dp"
+        android:textColor="@color/red_soft"
+        android:textSize="13sp"
+        android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/footer"
+    <!-- aviso: confirmar destino / dados incompletos -->
+    <LinearLayout
+        android:id="@+id/warnBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/muted"
-        android:textSize="10sp"/>
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_box"
+        android:backgroundTint="@color/amber_bg"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/warnText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/amber_text"
+            android:textSize="13sp" />
+        <TextView
+            android:id="@+id/warnAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:drawableStart="@drawable/ic_pin"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/amber"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textColor="@color/text"
+            android:textSize="13sp" />
+        <LinearLayout
+            android:id="@+id/destButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btnInside"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_box"
+                android:backgroundTint="@color/green"
+                android:stateListAnimator="@null"
+                android:text="É na cidade"
+                android:textAllCaps="false"
+                android:textColor="@color/on_green"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <Button
+                android:id="@+id/btnOutside"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_outline"
+                android:stateListAnimator="@null"
+                android:text="É fora"
+                android:textAllCaps="false"
+                android:textColor="@color/amber_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <Button
+            android:id="@+id/btnComplete"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_box"
+            android:backgroundTint="@color/amber"
+            android:stateListAnimator="@null"
+            android:text="Completar dados"
+            android:textAllCaps="false"
+            android:textColor="@color/on_amber"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- R$/km em destaque -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp">
+            <TextView
+                android:id="@+id/perKm"
+                style="@style/Num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sg_700"
+                android:text="—"
+                android:textSize="36sp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginBottom="7dp"
+                android:layout_weight="1"
+                android:text="/km"
+                android:textColor="@color/muted"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/perKmHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:textColor="@color/muted"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 2 x 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+            <LinearLayout android:id="@+id/tPrice" style="@style/TileBox" android:layout_marginEnd="8dp">
+                <TextView style="@style/TileLabel" android:text="Valor" />
+                <TextView android:id="@+id/vPrice" style="@style/Num" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/tDist" style="@style/TileBox">
+                <TextView style="@style/TileLabel" android:text="Distância total" />
+                <TextView android:id="@+id/vDist" style="@style/Num" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <TextView android:id="@+id/vDistSub" style="@style/TileLabel" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+            <LinearLayout android:id="@+id/tFuel" style="@style/TileBox" android:layout_marginEnd="8dp">
+                <TextView style="@style/TileLabel" android:text="Combustível" />
+                <TextView android:id="@+id/vFuel" style="@style/Num" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/tProfit" style="@style/TileBox">
+                <TextView android:id="@+id/lProfit" style="@style/TileLabel" android:text="Lucro estimado" />
+                <TextView android:id="@+id/vProfit" style="@style/Num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/sg_700" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- destino -->
+        <LinearLayout
+            android:id="@+id/destRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_tile"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="8dp">
+            <ImageView
+                android:id="@+id/destIcon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_pin"
+                android:tint="@color/blue_soft" />
+            <TextView
+                android:id="@+id/destText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text2"
+                android:textSize="12sp" />
+            <TextView
+                android:id="@+id/destTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="@color/muted"
+            android:textSize="11sp" />
+    </LinearLayout>
 </LinearLayout>
