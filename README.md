@@ -50,7 +50,9 @@ Todas as versões ficam em [Releases](https://github.com/EriclesAlves13/smart-dr
 
 5. Você toca em aceitar ou recusar **no próprio Uber**.
 
-Botões da janela: **✎** corrige ou completa dados à mão. **—** minimiza e deixa só o resultado.
+A janela abre **compacta**: o resultado com o R$/km do lado e uma linha com valor, km, lucro e destino.
+Botões da janela: **✎** corrige ou completa dados à mão. **⌄** mostra os detalhes (quadro completo),
+e **—** volta para o modo compacto.
 Arraste a janela para onde ela não cubra os botões do Uber. Para desligar, toque em **Parar leitura**
 no app ou use a notificação → **Parar**.
 

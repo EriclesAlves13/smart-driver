@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
-    android:layout_width="300dp"
+    android:layout_width="250dp"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_overlay"
     android:elevation="12dp"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,28 +26,30 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:maxLines="2"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="11sp"
             android:text="Aguardando oferta…" />
         <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
             android:background="@drawable/bg_icon_btn"
             android:contentDescription="Editar dados"
-            android:padding="11dp"
+            android:padding="9dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_pencil"
             android:tint="@color/text2" />
         <ImageButton
             android:id="@+id/btnMin"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="6dp"
             android:background="@drawable/bg_icon_btn"
-            android:contentDescription="Minimizar"
-            android:padding="11dp"
+            android:contentDescription="Ver detalhes"
+            android:padding="9dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_minus"
+            android:src="@drawable/ic_expand"
             android:tint="@color/text2" />
     </LinearLayout>
 
@@ -56,45 +58,71 @@
         android:id="@+id/verdictBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:background="@drawable/bg_round"
         android:backgroundTint="#FF3A444F"
-        android:gravity="center"
-        android:minHeight="58dp"
+        android:gravity="center_vertical"
+        android:minHeight="44dp"
         android:orientation="horizontal"
         android:paddingStart="10dp"
         android:paddingEnd="10dp">
         <ImageView
             android:id="@+id/verdictIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="10dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="8dp"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_phone"
             android:tint="@color/text" />
         <TextView
             android:id="@+id/verdict"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:fontFamily="@font/sg_700"
-            android:letterSpacing="0.04"
+            android:letterSpacing="0.03"
+            android:maxLines="2"
             android:text="AGUARDANDO"
             android:textColor="@color/text"
-            android:textSize="24sp" />
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/verdictKm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:fontFamily="@font/sg_700"
+            android:textSize="14sp"
+            android:visibility="gone" />
     </LinearLayout>
+
+    <!-- resumo (modo compacto) -->
+    <TextView
+        android:id="@+id/summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:lineSpacingExtra="2dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:textColor="@color/text2"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
     <!-- motivos da recusa -->
     <TextView
         android:id="@+id/reasons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:background="@drawable/bg_box"
         android:backgroundTint="@color/red_bg"
-        android:lineSpacingExtra="4dp"
-        android:padding="10dp"
+        android:lineSpacingExtra="2dp"
+        android:paddingStart="8dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="6dp"
         android:textColor="@color/red_soft"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:visibility="gone" />
 
     <!-- aviso: confirmar destino / dados incompletos -->
@@ -102,11 +130,11 @@
         android:id="@+id/warnBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:background="@drawable/bg_box"
         android:backgroundTint="@color/amber_bg"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:padding="8dp"
         android:visibility="gone">
         <TextView
             android:id="@+id/warnText"
@@ -196,7 +224,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sg_700"
                 android:text="—"
-                android:textSize="36sp" />
+                android:textSize="28sp" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

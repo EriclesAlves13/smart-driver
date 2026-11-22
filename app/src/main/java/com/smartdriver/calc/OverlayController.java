@@ -23,9 +23,13 @@ public class OverlayController {
     private View tProfit;
     private ImageView verdictIcon, destIcon;
     private TextView status, verdict, reasons, warnText, warnAddress, perKm, perKmHint,
-            vPrice, vDist, vDistSub, vFuel, vProfit, lProfit, destText, destTag, footer;
+            vPrice, vDist, vDistSub, vFuel, vProfit, lProfit, destText, destTag, footer,
+            verdictKm, summary;
+    private ImageView btnMin;
     private WindowManager.LayoutParams lp;
-    private boolean minimized, hasOffer;
+    /** compacto por padrao; o botao mostra/esconde os detalhes (vale ate fechar o app) */
+    private static boolean expanded;
+    private boolean hasOffer;
     private boolean showReasons, showWarn;
     /** area da janela na tela (usada para tampar a propria janela antes do OCR) */
     public volatile Rect screenRect = new Rect();
@@ -65,6 +69,9 @@ public class OverlayController {
         destText = root.findViewById(R.id.destText);
         destTag = root.findViewById(R.id.destTag);
         footer = root.findViewById(R.id.footer);
+        verdictKm = root.findViewById(R.id.verdictKm);
+        summary = root.findViewById(R.id.summary);
+        btnMin = root.findViewById(R.id.btnMin);
         applyVisibility();
 
         int type = Build.VERSION.SDK_INT >= 26
@@ -84,7 +91,7 @@ public class OverlayController {
 
         root.findViewById(R.id.btnEdit).setOnClickListener(v -> openManual());
         btnComplete.setOnClickListener(v -> openManual());
-        root.findViewById(R.id.btnMin).setOnClickListener(v -> { minimized = !minimized; applyVisibility(); });
+        btnMin.setOnClickListener(v -> { expanded = !expanded; applyVisibility(); });
         root.findViewById(R.id.btnInside).setOnClickListener(v -> setDestination(Offer.Destination.INSIDE));
         root.findViewById(R.id.btnOutside).setOnClickListener(v -> setDestination(Offer.Destination.OUTSIDE));
 
@@ -137,10 +144,15 @@ public class OverlayController {
     }
 
     private void applyVisibility() {
-        boolean full = hasOffer && !minimized;
+        boolean full = hasOffer && expanded;
+        boolean compact = hasOffer && !expanded;
         details.setVisibility(full ? View.VISIBLE : View.GONE);
-        reasons.setVisibility(full && showReasons ? View.VISIBLE : View.GONE);
-        warnBox.setVisibility(full && showWarn ? View.VISIBLE : View.GONE);
+        summary.setVisibility(compact && summary.length() > 0 ? View.VISIBLE : View.GONE);
+        verdictKm.setVisibility(compact && verdictKm.length() > 0 ? View.VISIBLE : View.GONE);
+        reasons.setVisibility(hasOffer && showReasons ? View.VISIBLE : View.GONE);
+        warnBox.setVisibility(hasOffer && showWarn ? View.VISIBLE : View.GONE);
+        btnMin.setImageResource(expanded ? R.drawable.ic_minus : R.drawable.ic_expand);
+        btnMin.setContentDescription(expanded ? "Esconder detalhes" : "Ver detalhes");
     }
 
     public void setStatus(String s, boolean warn) {
@@ -162,7 +174,7 @@ public class OverlayController {
         verdictIcon.setImageTintList(ColorStateList.valueOf(fg));
         verdict.setText(Render.verdictLabel(r.verdict));
         verdict.setTextColor(fg);
-        verdict.setTextSize(r.verdict == Calculator.Verdict.ACCEPT || r.verdict == Calculator.Verdict.REJECT ? 26 : 19);
+        verdict.setTextSize(r.verdict == Calculator.Verdict.ACCEPT || r.verdict == Calculator.Verdict.REJECT ? 19 : 14);
 
         // motivos
         showReasons = r.verdict == Calculator.Verdict.REJECT && !r.reasons.isEmpty();
@@ -195,6 +207,14 @@ public class OverlayController {
             perKm.setText("—");
             perKm.setTextColor(Render.MUTED);
             perKmHint.setText("");
+        }
+
+        // R$/km na barra do resultado (modo compacto)
+        if (r.perKm != null) {
+            verdictKm.setText(Render.money(r.perKm) + "/km");
+            verdictKm.setTextColor(fg);
+        } else {
+            verdictKm.setText("");
         }
 
         // quadro 2 x 2
@@ -234,12 +254,25 @@ public class OverlayController {
                 o.destination == Offer.Destination.OUTSIDE ? Render.RED_TEXT
                         : o.destination == Offer.Destination.UNKNOWN ? Render.AMBER : Render.BLUE_SOFT));
 
+        summary.setText(summaryText(o, r, tag));
+
         footer.setText(Render.footer(o, elapsedMs));
         footer.setTextColor(o.anyManual() ? Render.AMBER_TEXT : Render.MUTED);
         footer.setVisibility(footer.length() > 0 ? View.VISIBLE : View.GONE);
 
         setStatus(o.anyManual() ? "Oferta (com dados digitados)" : "Oferta detectada", false);
         applyVisibility();
+    }
+
+    /** "R$ 8,01 · 11,6 km · lucro R$ 1,58" + linha do destino */
+    private static String summaryText(Offer o, Calculator.Result r, String destTag) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(o.price == null ? "valor não lido" : Render.money(o.price));
+        Double total = o.totalKm();
+        sb.append(" · ").append(total == null ? "km não lido" : Render.num(total) + " km");
+        if (r.profit != null) sb.append(" · lucro ").append(Render.money(r.profit));
+        sb.append("\nDestino: ").append(destTag);
+        return sb.toString();
     }
 
     private static void setValue(TextView v, String value, boolean manual) {
@@ -258,10 +291,12 @@ public class OverlayController {
     public void markStale() {
         if (verdictBox != null && hasOffer) {
             verdictBox.setAlpha(0.45f);
-            setStatus("Aguardando nova oferta… (resultado anterior)", false);
+            setStatus("Resultado anterior · aguardando", false);
             dot.setBackgroundTintList(ColorStateList.valueOf(Render.MUTED));
         }
     }
+
+    View rootForTest() { return root; }
 
     public void hide() {
         if (root != null) {

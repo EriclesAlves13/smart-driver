@@ -76,6 +76,14 @@ public class UiSmokeTest {
             assertEquals(expected[i], Render.verdictLabel(res.verdict));
             oc.showResult(o, res, 400);
         }
+        // compacto por padrao; o botao alterna para os detalhes e volta
+        View root = oc.rootForTest();
+        assertEquals(View.VISIBLE, root.findViewById(R.id.summary).getVisibility());
+        assertEquals(View.GONE, root.findViewById(R.id.details).getVisibility());
+        root.findViewById(R.id.btnMin).performClick();
+        assertEquals(View.VISIBLE, root.findViewById(R.id.details).getVisibility());
+        assertEquals(View.GONE, root.findViewById(R.id.summary).getVisibility());
+        root.findViewById(R.id.btnMin).performClick();
         oc.markStale();
         oc.setStatus("teste", true);
         oc.hide();
