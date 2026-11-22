@@ -25,9 +25,13 @@ Todas as versões ficam em [Releases](https://github.com/EriclesAlves13/smart-dr
    - **Consumo** do carro em km/L (ex: `11,5`). Obrigatório.
    - **Preço do combustível** em R$/litro (ex: `6,19`). Obrigatório.
    - **Cidade onde você roda** (padrão: Maranguape).
+   - *(Opcional)* **Outras cidades liberadas**: toque em **+ Adicionar** (ex: `Maracanaú`).
+     Destinos nessas cidades contam como "na cidade".
    - *(Opcional)* **Locais liberados fora da cidade**: toque em **+ Adicionar** (ex: `Shopping Maracanaú`).
      Para remover, toque na etiqueta.
    - *(Opcional)* **Bairros da cidade**: use quando o Uber mostra só rua e bairro.
+   - **Regras**: mínimo por km (padrão R$ 2,00) e mínimo por corrida (padrão R$ 8,00).
+     Edite os valores direto na tela. Em branco volta ao padrão.
 2. Toque em **Permitir janela flutuante** e ative a opção para o Smart Driver.
 3. Toque em **Iniciar leitura** e autorize. No Android 14 ou mais novo, escolha
    **"Tela inteira"** ou o app **Uber Driver**. O Uber Driver abre sozinho.
@@ -64,9 +68,9 @@ Tema escuro **"Painel Noturno"**, feito para ler rápido dirigindo e sem ofuscar
 ## Regras do cálculo
 | Regra | Valor |
 |---|---|
-| Mínimo por km | R$ 2,00 (valor ÷ km totais) |
-| Mínimo por corrida | R$ 8,00 |
-| Destino | somente na cidade escolhida ou num local liberado |
+| Mínimo por km | R$ 2,00 por padrão, editável (valor ÷ km totais) |
+| Mínimo por corrida | R$ 8,00 por padrão, editável |
+| Destino | somente na cidade escolhida, numa das outras cidades liberadas ou num local liberado |
 | Combustível | km totais ÷ consumo × preço do litro |
 | Lucro | valor − combustível |
 
@@ -125,7 +129,7 @@ Tela do celular ──(MediaProjection, ~1,4 quadros/s)──► imagem reduzida
 ### Privacidade e desempenho
 - O OCR roda **offline, dentro do celular**. O app **não tem permissão de internet**: a telemetria
   do ML Kit foi removida do manifesto, e nada sai do aparelho.
-- **Sem histórico.** Só a configuração (consumo, preço, cidade, bairros e locais) fica salva.
+- **Sem histórico.** Só a configuração (consumo, preço, regras, cidades, bairros e locais) fica salva.
 - A análise sai em menos de 1 segundo depois da leitura da tela, e o tempo aparece na janela.
 - As telas do próprio app pausam a leitura, para não ler o formulário de edição.
 
@@ -138,7 +142,7 @@ Tela do celular ──(MediaProjection, ~1,4 quadros/s)──► imagem reduzida
 | [`OverlayController.java`](app/src/main/java/com/smartdriver/calc/OverlayController.java) | Janela flutuante arrastável |
 | [`MainActivity.java`](app/src/main/java/com/smartdriver/calc/MainActivity.java) | Configuração e início |
 | [`ManualActivity.java`](app/src/main/java/com/smartdriver/calc/ManualActivity.java) | Preenchimento e correção manual |
-| [`OfferTest.java`](app/src/test/java/com/smartdriver/calc/OfferTest.java) | 19 testes da leitura e do cálculo |
+| [`OfferTest.java`](app/src/test/java/com/smartdriver/calc/OfferTest.java) | 21 testes da leitura e do cálculo |
 | [`UiSmokeTest.java`](app/src/test/java/com/smartdriver/calc/UiSmokeTest.java) | 4 testes que abrem as telas e desenham a janela em todos os resultados (Robolectric) |
 
 Java puro, sem bibliotecas além do Google ML Kit Text Recognition. minSdk 24, targetSdk 34.

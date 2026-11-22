@@ -26,11 +26,11 @@ public class MainActivity extends Activity {
     private static final int REQ_CAPTURE = 10;
     private static final String UBER_DRIVER = "com.ubercab.driver";
 
-    private EditText kmL, fuel, city;
-    private FlowLayout placesView, hoodsView;
+    private EditText kmL, fuel, city, minKm, minTrip;
+    private FlowLayout citiesView, placesView, hoodsView;
     private TextView pill;
     private Button btnMain;
-    private List<String> places, hoods;
+    private List<String> cities, places, hoods;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -39,6 +39,9 @@ public class MainActivity extends Activity {
         kmL = findViewById(R.id.kmL);
         fuel = findViewById(R.id.fuel);
         city = findViewById(R.id.city);
+        minKm = findViewById(R.id.minKm);
+        minTrip = findViewById(R.id.minTrip);
+        citiesView = findViewById(R.id.cities);
         placesView = findViewById(R.id.places);
         hoodsView = findViewById(R.id.hoods);
         pill = findViewById(R.id.pill);
@@ -48,8 +51,12 @@ public class MainActivity extends Activity {
         if (r.kmPerLiter > 0) kmL.setText(Render.num(r.kmPerLiter));
         if (r.fuelPrice > 0) fuel.setText(Render.dec2(r.fuelPrice));
         city.setText(Prefs.city(this));
+        minKm.setText(Render.dec2(r.minPerKm));
+        minTrip.setText(Render.dec2(r.minPerTrip));
+        cities = Prefs.split(Prefs.allowedCities(this));
         places = Prefs.split(Prefs.allowedPlaces(this));
         hoods = Prefs.split(Prefs.insideExtra(this));
+        renderChips(citiesView, cities, "Nova cidade liberada", "ex: Maracanaú");
         renderChips(placesView, places, "Novo local liberado", "ex: Shopping Maracanaú");
         renderChips(hoodsView, hoods, "Novo bairro", "ex: Novo Maranguape");
 
@@ -137,7 +144,7 @@ public class MainActivity extends Activity {
                     .setMessage("Remover “" + item + "”?")
                     .setPositiveButton("Remover", (dl, w) -> {
                         list.remove(item);
-                        Prefs.saveLists(this, hoods, places);
+                        Prefs.saveLists(this, cities, hoods, places);
                         renderChips(box, list, title, hint);
                     })
                     .setNegativeButton("Cancelar", null)
@@ -162,7 +169,7 @@ public class MainActivity extends Activity {
                         String s = in.getText().toString().replace(",", " ").trim();
                         if (!s.isEmpty() && !list.contains(s)) {
                             list.add(s);
-                            Prefs.saveLists(this, hoods, places);
+                            Prefs.saveLists(this, cities, hoods, places);
                             renderChips(box, list, title, hint);
                         }
                     })
@@ -192,6 +199,9 @@ public class MainActivity extends Activity {
         Rules cur = Prefs.load(this);
         Prefs.save(this, ok ? k.floatValue() : (float) cur.kmPerLiter, ok ? f.floatValue() : (float) cur.fuelPrice,
                 city.getText().toString(), String.join("\n", hoods), String.join("\n", places));
+        Double mk = parse(minKm), mt = parse(minTrip);
+        Prefs.saveLimits(this, mk != null && mk >= 0 ? mk.floatValue() : 2.00f,
+                mt != null && mt >= 0 ? mt.floatValue() : 8.00f);
         if (!ok && warn) {
             Toast.makeText(this, "Preencha consumo (km/L) e preço do combustível.", Toast.LENGTH_LONG).show();
         }

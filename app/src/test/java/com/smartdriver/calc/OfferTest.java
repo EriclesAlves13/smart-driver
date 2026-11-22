@@ -180,4 +180,27 @@ public class OfferTest {
         assertEquals(Offer.Destination.OUTSIDE, o2.destination);
         assertTrue(Calculator.evaluate(o2, r).reasons.get(0).contains("Maracanaú"));
     }
+
+    @Test public void extraAllowedCity() {
+        Rules r = rules();
+        r.extraCities = new String[]{"Maracanaú"};
+        r.insideWords = new String[]{"maranguape", "Maracanaú"};
+        Offer o = OfferParser.parse(toDest("Rua 10, Jereissati, Maracanaú - CE"), r);
+        assertEquals(Offer.Destination.INSIDE, o.destination);
+        Offer o2 = OfferParser.parse(toDest("Av. Bezerra de Menezes, Fortaleza - CE"), r);
+        assertEquals(Offer.Destination.OUTSIDE, o2.destination);
+        assertTrue(Calculator.evaluate(o2, r).reasons.get(0).contains("Maranguape, Maracanaú"));
+    }
+
+    @Test public void customMinimums() {
+        Rules r = rules();
+        r.minPerKm = 3.00;   // oferta padrao = R$ 2,59/km
+        Calculator.Result res = Calculator.evaluate(OfferParser.parse(OFFER_INSIDE, r), r);
+        assertEquals(Calculator.Verdict.REJECT, res.verdict);
+        r.minPerKm = 2.00;
+        r.minPerTrip = 30.00; // oferta padrao = R$ 25,90
+        res = Calculator.evaluate(OfferParser.parse(OFFER_INSIDE, r), r);
+        assertEquals(Calculator.Verdict.REJECT, res.verdict);
+        assertTrue(res.reasons.get(0).contains("30,00"));
+    }
 }

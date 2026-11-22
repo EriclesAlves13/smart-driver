@@ -36,6 +36,9 @@ public class UiSmokeTest {
         assertEquals("Permitir janela flutuante", ((TextView) a.findViewById(R.id.btnMain)).getText().toString());
         assertEquals("● Falta permissão", ((TextView) a.findViewById(R.id.pill)).getText().toString());
         assertTrue(((android.view.ViewGroup) a.findViewById(R.id.places)).getChildCount() >= 2); // chip + adicionar
+        assertEquals(1, ((android.view.ViewGroup) a.findViewById(R.id.cities)).getChildCount()); // so "+ Adicionar"
+        assertEquals("2,00", ((TextView) a.findViewById(R.id.minKm)).getText().toString());
+        assertEquals("8,00", ((TextView) a.findViewById(R.id.minTrip)).getText().toString());
     }
 
     @Test public void manualScreenWithOfferCalculates() {

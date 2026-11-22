@@ -22,7 +22,10 @@ public final class Prefs {
         r.minPerKm = p.getFloat("minPerKm", 2.00f);
         r.minPerTrip = p.getFloat("minPerTrip", 8.00f);
         r.city = city(c);
+        List<String> cities = split(p.getString("allowedCities", ""));
+        r.extraCities = cities.toArray(new String[0]);
         List<String> inside = split(p.getString("insideWords", ""));
+        inside.addAll(0, cities);
         inside.add(0, r.city);
         r.insideWords = inside.toArray(new String[0]);
         r.allowedPlaces = split(p.getString("allowedPlaces", "")).toArray(new String[0]);
@@ -42,6 +45,17 @@ public final class Prefs {
         return sp(c).getString("allowedPlaces", "");
     }
 
+    public static String allowedCities(Context c) {
+        return sp(c).getString("allowedCities", "");
+    }
+
+    public static void saveLimits(Context c, float minPerKm, float minPerTrip) {
+        sp(c).edit()
+                .putFloat("minPerKm", minPerKm)
+                .putFloat("minPerTrip", minPerTrip)
+                .apply();
+    }
+
     public static void save(Context c, float kmPerLiter, float fuelPrice, String city,
                             String insideExtra, String allowedPlaces) {
         sp(c).edit()
@@ -53,8 +67,9 @@ public final class Prefs {
                 .apply();
     }
 
-    public static void saveLists(Context c, List<String> hoods, List<String> places) {
+    public static void saveLists(Context c, List<String> cities, List<String> hoods, List<String> places) {
         sp(c).edit()
+                .putString("allowedCities", String.join("\n", cities))
                 .putString("insideWords", String.join("\n", hoods))
                 .putString("allowedPlaces", String.join("\n", places))
                 .apply();

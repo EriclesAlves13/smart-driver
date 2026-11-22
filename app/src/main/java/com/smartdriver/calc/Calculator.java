@@ -41,7 +41,7 @@ public final class Calculator {
         if (o.price != null && o.price < r.minPerTrip)
             res.reasons.add(String.format(BR, "Valor R$ %.2f — abaixo de R$ %.2f", o.price, r.minPerTrip));
         if (o.destination == Offer.Destination.OUTSIDE)
-            res.reasons.add("Destino fora de " + r.city
+            res.reasons.add("Destino fora de " + r.citiesLabel()
                     + (r.allowedPlaces.length > 0 ? " e não é local liberado" : ""));
         if (res.profit != null && res.profit <= 0)
             res.reasons.add("Sem lucro após o combustível");
